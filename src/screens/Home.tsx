@@ -64,13 +64,13 @@ const Home = () => {
                         Edit
                     </Text>
                 </TouchableOpacity>
-            </View>
                 <TouchableOpacity onPress={() => handleShare()}>
                     {/* <Icon icon={pencil} size={24} style={styles.icon} /> */}
                     <Text>
                         share
                     </Text>
                 </TouchableOpacity>
+            </View>
             <View style={styles.details}>
                 <View >
                     <Text style={styles.name} >{item.name}</Text>
@@ -134,7 +134,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginLeft: 10,
+        // marginLeft: 10,
+        paddingHorizontal:10
     },
     icon: {
         color: 'green',
