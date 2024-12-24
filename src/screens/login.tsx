@@ -10,7 +10,7 @@ import { sendLoginOtp, validateOtplogin, loginMobile } from '../services/loginSe
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import Register from '../components/register/register';
+// import Register from '../components/register/register';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 // import { getBillingAddres, getByIdBillingAddres, fetchBillingAddress } from '../services/BillingAddress';
@@ -52,9 +52,10 @@ const Login = () => {
   }, [otpSent, timerCounter]);
 
   useEffect(() => {
-    setStep(0)
+    setStep(0);
     checkAndClearStore();
     AsyncStorage.clear();
+    // handleBiometricAuthentication();
 
   }, []);
 
@@ -108,7 +109,11 @@ const Login = () => {
       .then((result) => {
         if (result.success) {
           Alert.alert('Authentication Successful');
-          navigation.navigate('Home');
+          // navigation.navigate('Home');
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }],
+          });
         } else {
           Alert.alert('Authentication Failed');
         }
@@ -345,7 +350,8 @@ const Login = () => {
   };
 
   return (
-    <><ImageBackground source={require('../../src/assest/images/login-bg.jpg')} style={styles.backgroundImage}>
+    <>
+    <ImageBackground source={require('../../src/assest/images/login-bg.jpg')} style={styles.backgroundImage}>
 
       {step === 0 && (<View style={styles.authSection}>
         <View style={styles.authHeader}>
@@ -415,7 +421,7 @@ const Login = () => {
           </TouchableOpacity>
           <Text style={styles.footerText}>
             Don't have an account?{' '}
-            <Text style={[styles.textPrimary, styles.registerLink]} onPress={() => { setStep(2); checkAndClearStore(); }}>
+            <Text style={[styles.textPrimary, styles.registerLink]} onPress={() => {checkAndClearStore();  navigation.navigate('Register'); }}>
               Register Now
             </Text>
           </Text>
@@ -509,7 +515,7 @@ const Login = () => {
       )}
 
     </ImageBackground>
-      {step === 2 && (<Register setStep={setStep} />)}
+      {/* {step === 2 && (<Register setStep={setStep} />)} */}
 
       <Modal visible={errorModal} animationType="slide" transparent onRequestClose={() => setErrorModal(false)}>
         <View style={styles.centeredView}>

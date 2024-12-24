@@ -11,6 +11,9 @@ import Home from './screens/Home';
 import Add from './screens/add';
 import List from './screens/List';
 import BillingAddress from './screens/BillingAddress';
+import Register from './screens/register';
+import AppUserView from './screens/appUser/appUserView';
+import AppUserEdit from './screens/appUser/appUserEdit';
 
 enableScreens();
 
@@ -20,6 +23,9 @@ export type RootStackParamList = {
   Add: undefined;
   List: undefined;
   BillingAddress: undefined;
+  Register: undefined;
+  AppUserView: { id: string | number };
+  AppUserEdit: { id: string | number };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -45,6 +51,9 @@ const App = (): React.JSX.Element => {
             <Stack.Screen name="BillingAddress" component={BillingAddress} />
             <Stack.Screen name="Add" component={Add} />
             <Stack.Screen name="List" component={List} />
+            <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen name="AppUserView" component={AppUserView} />
+            <Stack.Screen name="AppUserEdit" component={AppUserEdit} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>
