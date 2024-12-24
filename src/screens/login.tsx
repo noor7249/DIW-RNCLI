@@ -387,6 +387,7 @@ const Login = () => {
           </View>
           <TouchableOpacity
             style={[styles.button, styles.buttonWide, !!mobileError || AppUserValues.mobile.length <= 9 ? styles.buttonDisabled : styles.buttonActive]}
+            // onPress={()=>(navigation.navigate('Splash'))}
             onPress={sendOtpLogin}
 
           >

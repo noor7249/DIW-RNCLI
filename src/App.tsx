@@ -14,10 +14,12 @@ import BillingAddress from './screens/BillingAddress';
 import Register from './screens/register';
 import AppUserView from './screens/appUser/appUserView';
 import AppUserEdit from './screens/appUser/appUserEdit';
+import Splash from './screens/splash';
 
 enableScreens();
 
 export type RootStackParamList = {
+  Splash: undefined;
   Login: undefined;
   Home: undefined;
   Add: undefined;
@@ -45,7 +47,8 @@ const App = (): React.JSX.Element => {
           backgroundColor={backgroundStyle.backgroundColor}
         />
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Login" >
+          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Splash" >
+            <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="BillingAddress" component={BillingAddress} />
