@@ -4,22 +4,22 @@ import { useLinkTo, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, TextInput, StyleSheet, Dimensions, ScrollView, ImageBackground, Modal } from 'react-native';
 import { CheckBox } from 'react-native-elements';
-import { sendOtp, validateOtplogin, registerUser, loginMobile } from '../../services/loginService'
+import { sendOtp, validateOtplogin, registerUser, loginMobile } from '../services/loginService'
 // import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { Color, FontFamily } from '../../GlobalStyles';
-import ShopVerification from '../../components/register/shopVerification';
-import appUserStore from '../../store/store';
+import { Color, FontFamily } from '../GlobalStyles';
+// import ShopVerification from '../components/register/shopVerification';
+import appUserStore from '../store/store';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { mobileSchema, nameSchema } from '../../validationSchemas';
+import { mobileSchema, nameSchema } from '../validationSchemas';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../../App';
+import { RootStackParamList } from '../App';
 
-// import OrImage from '../../../assets/images/or.svg';
-// import GoogleIcon from '../../../assets/images/google-icon.svg';
-// import Farmer from '../../../assets/images/farmer.svg';
-// import Dealer from '../../../assets/images/dealer.svg';
-// import SuccessIcon from '../../../assets/images/success-icon.svg';
+// import OrImage from '../../assets/images/or.svg';
+// import GoogleIcon from '../../assets/images/google-icon.svg';
+// import Farmer from '../../assets/images/farmer.svg';
+// import Dealer from '../../assets/images/dealer.svg';
+// import SuccessIcon from '../../assets/images/success-icon.svg';
 // import Loading from '../loding';
 // import { router } from 'expo-router';
 // import { useSignUp, useAuth } from '@clerk/clerk-expo'
@@ -33,15 +33,10 @@ import { RootStackParamList } from '../../App';
 
 
 
-type RegisterProps = {
-    setStep: React.Dispatch<React.SetStateAction<number>>;
-
-};
-
 const { height: screenHeight, width: screenWidth } = Dimensions.get('window');
-type NavigationProps = NativeStackNavigationProp<RootStackParamList, 'Login'>;
+type NavigationProps = NativeStackNavigationProp<RootStackParamList, 'Register'>;
 
-const Register: React.FC<RegisterProps> = ({ setStep }) => {
+const Register = () => {
     const navigation = useNavigation<NavigationProps>();
     const [selectedProfile, setSelectedProfile] = useState<string>('farmer');
     const [otp, setOtp] = useState(['', '', '', '']);
@@ -362,11 +357,11 @@ const Register: React.FC<RegisterProps> = ({ setStep }) => {
     return (
 
         <>
-            {ShowVerification && (
+            {/* {ShowVerification && (
                 <ShopVerification setStep={setStep} />
-            )}
+            )} */}
 
-            {ShowOtpScreen && !ShowVerification ? (<ImageBackground source={require('../../assest/images/login-bg.jpg')} style={styles.backgroundImage}>
+            {ShowOtpScreen && !ShowVerification ? (<ImageBackground source={require('../assest/images/login-bg.jpg')} style={styles.backgroundImage}>
                 <View style={styles.oauthSection}>
                     <View style={styles.oauthHeader}>
                         <View style={styles.oheading}>
@@ -376,7 +371,7 @@ const Register: React.FC<RegisterProps> = ({ setStep }) => {
                             </Text>
                             <Text style={styles.mobileNo}>+91<Text>{formatMobileNumber(AppUserValues.mobile)}</Text></Text>
                             <TouchableOpacity>
-                                <Text style={styles.otextPrimary} onPress={() => { setStep(2); setShowOtpScreen(false); }}>Change Mobile Number</Text>
+                                <Text style={styles.otextPrimary} onPress={() => { setShowOtpScreen(false); }}>Change Mobile Number</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -437,7 +432,7 @@ const Register: React.FC<RegisterProps> = ({ setStep }) => {
                     <ScrollView showsVerticalScrollIndicator={false}>
                         <View style={styles.authHeader}>
                             <View style={[styles.logo, { width: imageWidth, height: imageHeight }]}>
-                                <Image source={require('../../assest/images/logo.png')} style={styles.logoImage} />
+                                <Image source={require('../assest/images/logo.png')} style={styles.logoImage} />
                             </View>
                             <View style={styles.heading}>
                                 <Text style={styles.spanText}>New Account</Text>
@@ -451,7 +446,7 @@ const Register: React.FC<RegisterProps> = ({ setStep }) => {
                                 <View style={styles.selectRegisterProfile}>
                                     <TouchableOpacity style={[styles.selectProfile]} onPress={() => { changeProfile('farmer'); setfarmer('farmer'); }}>
                                         <View style={[styles.avatar, selectedProfile === 'farmer' && styles.active]}>
-                                            <Image source={require('../../assest/images/farmer.png')} style={styles.avatarImage} />
+                                            <Image source={require('../assest/images/farmer.png')} style={styles.avatarImage} />
                                             {/* <Farmer
                                                     style={styles.avatarImage}
                                                     height={'100%'}
@@ -469,7 +464,7 @@ const Register: React.FC<RegisterProps> = ({ setStep }) => {
                                     <TouchableOpacity style={[styles.selectProfile]} onPress={() => { changeProfile('dealer'); setdelar('dealer'); }}
                                     >
                                         <View style={[styles.avatar, selectedProfile === 'dealer' && styles.active]}>
-                                            <Image source={require('../../assest/images/dealer.png')} style={[styles.avatarImage]} />
+                                            <Image source={require('../assest/images/dealer.png')} style={[styles.avatarImage]} />
                                             {/* <Dealer
                                                     style={styles.avatarImage}
                                                     height={'100%'}
@@ -542,7 +537,7 @@ const Register: React.FC<RegisterProps> = ({ setStep }) => {
                                     style={styles.orImage}
                                 /> */}
                                 <Image
-                                    source={require('../../assest/images/or.png')}
+                                    source={require('../assest/images/or.png')}
                                     style={styles.orImage}
                                     resizeMode="contain" />
                             </View>
@@ -551,22 +546,25 @@ const Register: React.FC<RegisterProps> = ({ setStep }) => {
                                     style={styles.googleIcon}
                                 /> */}
                                 <Image
-                                    source={require('../../assest/images/google-icon.png')}
+                                    source={require('../assest/images/google-icon.png')}
                                     style={styles.googleIcon}
                                     resizeMode="contain" />
-                                <Text style={styles.googleBtnText}>Continue with Google</Text>
+                                <Text style={styles.googleBtnText}>Continue with Googleeee</Text>
                             </TouchableOpacity>
 
                             <View style={{ marginTop: 20, paddingBottom: 40 }}>
                                 <Text style={styles.footerText}>
                                     Already have an account{' '}
-                                    <Text style={[styles.textPrimary, styles.loginLink]} onPress={() => setStep(0)}>Login</Text>
+                                    <Text style={[styles.textPrimary, styles.loginLink]} onPress={() => navigation.reset({
+                                        index: 0,
+                                        routes: [{ name: 'Login' }],
+                                    })}>Login</Text>
                                 </Text>
                             </View>
                         </View>
 
-                    </ScrollView>
-                </View>
+                    </ScrollView >
+                </View >
 
             )}
             <Modal
@@ -580,7 +578,7 @@ const Register: React.FC<RegisterProps> = ({ setStep }) => {
                         {Otpres === 'Register-Farmer' || Otpres === 'Register-Dealer' ? (
                             <TouchableOpacity onPress={() => {
                                 setDialog(false);
-                                setStep(0);
+                                // setStep(0);
                             }} style={styles.closeIcon}>
                                 <Icon name="close" size={22} color="#fff" style={styles.close} />
                             </TouchableOpacity>
@@ -592,7 +590,7 @@ const Register: React.FC<RegisterProps> = ({ setStep }) => {
                             style={styles.successIcon}
                         /> */}
                         <Image
-                            source={require('../../assest/images/success-icon.png')}
+                            source={require('../assest/images/success-icon.png')}
                             style={{ height: 200, width: 200 }}
                             resizeMode="contain" />
 
