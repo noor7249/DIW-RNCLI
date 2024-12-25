@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, FlatList, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { fetchAppUsers } from '../services/appUser';
 import { Color, FontFamily } from '../GlobalStyles';
 // import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// import { Icon } from 'react-icons-kit';
+// import FontAwesome from 'react-native-vector-icons/FontAwesome';
+
 // import { eye } from 'react-icons-kit/icomoon/eye';
 // import { pencil } from 'react-icons-kit/icomoon/pencil';
 import Share from 'react-native-share';
@@ -31,17 +32,42 @@ const Home = () => {
 
     const handleShare = () => {
         Share.open({
-          message: 'Hello from React Native!',
+            message: 'Hello from React Native!',
         })
-          .then((res:any) => {
-            console.log('Share Success:', res);
-          })
-          .catch((err:any) => {
-            if (err && err.message) {
-              console.error('Share Error:', err.message);
-            }
-          });
-      };
+            .then((res: any) => {
+                console.log('Share Success:', res);
+            })
+            .catch((err: any) => {
+                if (err && err.message) {
+                    console.error('Share Error:', err.message);
+                }
+            });
+    };
+
+    // const handleWhatsAppShare = () => {
+    //     const message = 'Hello, this is react native!✡️✡️✡️';
+    //     const url = `whatsapp://send?text=${encodeURIComponent(message)}`;
+    //     Linking.canOpenURL(url)
+    //         .then((supported) => {
+    //             if (!supported) {
+    //                 Alert.alert('Error', 'WhatsApp is not installed on this device.');
+    //             } else {
+    //                 return Linking.openURL(url);
+    //             }
+    //         })
+    //         .catch((err) => console.error('An error occurred', err));
+    // };
+
+    const handleWhatsAppShare = () => {
+        const dynamicLink = `https://www.amazon.com`; // Example Amazon product URL
+        const message = ` Hello, this is react native!✡️✡️✡️
+         Check out this amazing product on Amazon: ${dynamicLink}`;
+        const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(message)}`;
+        Linking.openURL(whatsappUrl).catch((err) => {
+            Alert.alert('Error', 'WhatsApp could not be opened.');
+            console.error('An error occurred', err);
+        });
+    };
 
     const renderAppUser = ({ item }: { item: any }) => (
         <View style={styles.card}>
@@ -53,7 +79,8 @@ const Home = () => {
             </View>
             <View style={styles.iconContainer}>
                 <TouchableOpacity onPress={() => navigation.navigate('AppUserView', { id: item.id })}>
-                    {/* <Icon icon={eye} size={24} style={styles.icon} /> */}
+                    {/* <MaterialCommunityIcons name="eye" size={24} style={styles.icon} /> */}
+                    {/* <FontAwesome name="eye" size={24} style={styles.icon} /> */}
                     <Text>
                         View
                     </Text>
@@ -64,11 +91,16 @@ const Home = () => {
                         Edit
                     </Text>
                 </TouchableOpacity>
+            </View>
+            <View style={styles.iconContainer}>
                 <TouchableOpacity onPress={() => handleShare()}>
                     {/* <Icon icon={pencil} size={24} style={styles.icon} /> */}
                     <Text>
                         share
                     </Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleWhatsAppShare}>
+                    <Text>WhatsApp</Text>
                 </TouchableOpacity>
             </View>
             <View style={styles.details}>
@@ -135,7 +167,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         // marginLeft: 10,
-        paddingHorizontal:10
+        paddingHorizontal: 10,
     },
     icon: {
         color: 'green',
