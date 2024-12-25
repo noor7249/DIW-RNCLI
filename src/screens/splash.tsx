@@ -13,12 +13,11 @@ const Splash = () => {
   const navigation = useNavigation<NavigationProps>();
 
   useEffect(() => {
-    // Navigate to Login after 3 seconds
     const timeout = setTimeout(() => {
       navigation.replace('Login');
     }, 5000);
 
-    return () => clearTimeout(timeout); // Clear timeout if component unmounts
+    return () => clearTimeout(timeout); 
   }, [navigation]);
 
   return (
