@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "271530011804",
+    "project_id": "diw-rncli",
+    "storage_bucket": "diw-rncli.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271530011804:android:ff26a1ffb02a1c51f2d159",
+        "android_client_info": {
+          "package_name": "com.diwrncli"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3hxxyUCpnGN9mC7OmMZbzmXxwW7IyToM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -92,7 +92,6 @@ const Register = () => {
                 setRegisterFarmer(false);
                 setRegisterDealer(false);
                 setDialog(false);
-                setStep(0)
                 setCheckedInstructions(false);
             }, 3000);
 
@@ -229,6 +228,7 @@ const Register = () => {
         if (typeof data === 'string') {
             try {
                 data = JSON.parse(data);
+                console.log('data.token',data.token);
             } catch (parseError) {
                 console.error('Error parsing data:', parseError);
                 return Promise.reject(parseError);

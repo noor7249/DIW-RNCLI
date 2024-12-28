@@ -116,4 +116,17 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    implementation project(':react-native-vector-icons')
+      implementation 'com.google.firebase:firebase-messaging:23.1.1'  // Add Firebase Messaging SDK
+    // Add other Firebase libraries here if needed, for example:
+    // implementation 'com.google.firebase:firebase-analytics:20.2.0'
+    // implementation 'com.google.firebase:firebase-auth:21.1.1'
+    // implementation 'com.google.firebase:firebase-database:20.0.0'
 }
+project.ext.vectoricons = [
+    iconFontNames: [ 'MaterialCommunityIcons.ttf', 'FontAwesome.ttf' ] // Add other required fonts here
+]
+apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
+
+apply plugin: 'com.google.gms.google-services'
+
