@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, FlatList, Image, Linking, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, Button, FlatList, Image, Linking, StyleSheet, Text, TouchableOpacity, View, PermissionsAndroid, Platform, BackHandler, ToastAndroid } from 'react-native';
 import { fetchAppUsers } from '../services/appUser';
 import { Color, FontFamily } from '../GlobalStyles';
-// import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 // import FontAwesome from 'react-native-vector-icons/FontAwesome';
+// import Icon from 'react-native-vector-icons/FontAwesome';
 
 // import { eye } from 'react-icons-kit/icomoon/eye';
 // import { pencil } from 'react-icons-kit/icomoon/pencil';
@@ -11,6 +13,8 @@ import Share from 'react-native-share';
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
+import PushNotification from 'react-native-push-notification';
+import messaging from '@react-native-firebase/messaging';
 
 type NavigationProps = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 
@@ -18,6 +22,39 @@ type NavigationProps = NativeStackNavigationProp<RootStackParamList, 'Home'>;
 const Home = () => {
     const navigation = useNavigation<NavigationProps>();
     const [appUsers, setAppUsers] = useState<any>();
+    const backPressCount = useRef(0);
+
+    messaging().onMessage(async remoteMessage => {
+        console.log('A new FCM message arrived!', remoteMessage);
+    });
+
+
+    useEffect(() => {
+        const backAction = () => {
+            console.log('Back button pressed');
+            if (backPressCount.current === 0) {
+                backPressCount.current = 1;
+                ToastAndroid.show('Press back again to exit', ToastAndroid.SHORT);
+                setTimeout(() => {
+                    backPressCount.current = 0;
+                }, 2000);
+                return true;
+            } else {
+                BackHandler.exitApp();
+                return true;
+            }
+        };
+
+        const backHandler = BackHandler.addEventListener(
+            'hardwareBackPress',
+            backAction
+        );
+
+        return () => {
+            console.log('BackHandler removed');
+            backHandler.remove();
+        };
+    }, []);
 
     useEffect(() => {
         fetchAppUsers().then(data => {
@@ -68,6 +105,52 @@ const Home = () => {
             console.error('An error occurred', err);
         });
     };
+    useEffect(() => {
+        requestNotificationPermission();
+        createNotificationChannel();
+    }, []);
+
+    const requestNotificationPermission = async () => {
+        if (Platform.OS === 'android' && Platform.Version >= 33) {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+                {
+                    title: 'Notification Permission',
+                    message: 'This app needs notification permissions to send you alerts.',
+                    buttonNeutral: 'Ask Me Later',
+                    buttonNegative: 'Cancel',
+                    buttonPositive: 'OK',
+                }
+            );
+            if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+                console.warn('Notification permission denied');
+            }
+        }
+    };
+
+    const createNotificationChannel = () => {
+        PushNotification.createChannel(
+            {
+                channelId: "local-message",
+                channelName: "Local Message",
+                importance: 4,
+                vibrate: true,
+            },
+            (created) => console.log(`createChannel returned '${created}'`)
+        );
+    };
+
+    const LocalNotification = () => {
+        PushNotification.localNotification({
+            channelId: "local-message",
+            title: "Local Notification",
+            message: "This is a test notification! from react native",
+            playSound: true,
+            soundName: "default",
+            importance: "high",
+            vibrate: true,
+        });
+    };
 
     const renderAppUser = ({ item }: { item: any }) => (
         <View style={styles.card}>
@@ -79,28 +162,33 @@ const Home = () => {
             </View>
             <View style={styles.iconContainer}>
                 <TouchableOpacity onPress={() => navigation.navigate('AppUserView', { id: item.id })}>
-                    {/* <MaterialCommunityIcons name="eye" size={24} style={styles.icon} /> */}
-                    {/* <FontAwesome name="eye" size={24} style={styles.icon} /> */}
-                    <Text>
-                        View
-                    </Text>
+                    <View style={styles.iconTextContainer}>
+                        <MaterialCommunityIcons name="eye" size={24} color="black" />
+                        <Text>View</Text>
+                    </View>
                 </TouchableOpacity>
+
                 <TouchableOpacity onPress={() => navigation.navigate('AppUserEdit', { id: item.id })}>
-                    {/* <Icon icon={pencil} size={24} style={styles.icon} /> */}
-                    <Text>
-                        Edit
-                    </Text>
+                    <View style={styles.iconTextContainer}>
+                        <MaterialCommunityIcons name="pencil" size={24} color="black" />
+                        <Text>Edit</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
+
             <View style={styles.iconContainer}>
                 <TouchableOpacity onPress={() => handleShare()}>
-                    {/* <Icon icon={pencil} size={24} style={styles.icon} /> */}
-                    <Text>
-                        share
-                    </Text>
+                    <View style={styles.iconTextContainer}>
+                        <MaterialCommunityIcons name="share-variant" size={24} color="black" />
+                        <Text>Share</Text>
+                    </View>
                 </TouchableOpacity>
+
                 <TouchableOpacity onPress={handleWhatsAppShare}>
-                    <Text>WhatsApp</Text>
+                    <View style={styles.iconTextContainer}>
+                        <MaterialCommunityIcons name="whatsapp" size={24} color="green" />
+                        <Text>WhatsApp</Text>
+                    </View>
                 </TouchableOpacity>
             </View>
             <View style={styles.details}>
@@ -114,13 +202,15 @@ const Home = () => {
     );
 
     return (
-        <View style={styles.con} >
+        <><View style={styles.con}>
             <FlatList
                 data={appUsers}
                 renderItem={renderAppUser}
-                numColumns={2}
-            />
-        </View>
+                numColumns={2} />
+        </View><View style={{ justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Push Notification!!</Text>
+                <Button title={'Click Here'} onPress={LocalNotification} />
+            </View></>
     );
 };
 
@@ -169,8 +259,11 @@ const styles = StyleSheet.create({
         // marginLeft: 10,
         paddingHorizontal: 10,
     },
-    icon: {
-        color: 'green',
+    iconTextContainer: {
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 5,
     },
 
 });

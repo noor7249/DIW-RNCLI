@@ -15,6 +15,7 @@ import Register from './screens/register';
 import AppUserView from './screens/appUser/appUserView';
 import AppUserEdit from './screens/appUser/appUserEdit';
 import Splash from './screens/splash';
+import RemoteNotification from './screens/RemoteNotification';
 
 enableScreens();
 
@@ -25,6 +26,7 @@ export type RootStackParamList = {
   Add: undefined;
   List: undefined;
   BillingAddress: undefined;
+  RemoteNotification: undefined;
   Register: undefined;
   AppUserView: { id: string | number };
   AppUserEdit: { id: string | number };
@@ -50,6 +52,7 @@ const App = (): React.JSX.Element => {
           <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Splash" >
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="RemoteNotification" component={RemoteNotification} />
             <Stack.Screen name="Home" component={Home} />
             <Stack.Screen name="BillingAddress" component={BillingAddress} />
             <Stack.Screen name="Add" component={Add} />

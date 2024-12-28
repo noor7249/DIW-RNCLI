@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Dimensions, ImageBackground, Image, TextInput, Modal, Button, Alert } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Dimensions, ImageBackground, Image, TextInput, Modal, Button, Alert} from 'react-native';
 import { Color, FontFamily } from '../GlobalStyles';
 import appUserStore from '../store/store';
 import { mobileSchema } from '../validationSchemas';
@@ -39,6 +39,8 @@ const Login = () => {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
   const rnBiometrics = new ReactNativeBiometrics();
+ 
+
 
   useEffect(() => {
     let timer: any;
@@ -64,6 +66,10 @@ const Login = () => {
       checkAndClearStore();
     }, [])
   );
+
+
+
+
 
   // useEffect(() => {
 
@@ -199,7 +205,7 @@ const Login = () => {
     if (AppUserValues.mobile.length === 10) {
       try {
         const response = await sendLoginOtp(AppUserValues.mobile);
-
+        console.log('response',response);
         if (response === 'OTP sent') {
           setOtpSent(true);
           setTimerCounter(60);
@@ -275,7 +281,7 @@ const Login = () => {
       try {
         const response = await validateOtplogin(AppUserValues.mobile, otpString);
         const [status, msg] = response.split(':');
-
+        console.log('validateOtpLogin',response);
         if (status === 'success') {
           if (msg === 'Not Register') {
             // setLoader(false);
@@ -306,7 +312,8 @@ const Login = () => {
 
     try {
       const response = await loginMobile(AppUserValues.mobile, otp.join(''));
-
+      // const response = await loginMobile("8308698826", '9999');
+      console.log('response',response);
       if (response === 'Not Register') {
         // alert('User Not Exists');
       } else {
@@ -331,6 +338,7 @@ const Login = () => {
     try {
       if (typeof data === 'string') {
         data = JSON.parse(data);
+        console.log('data.token',data.token);
       }
 
       await Promise.all([
@@ -351,171 +359,172 @@ const Login = () => {
 
   return (
     <>
-    <ImageBackground source={require('../../src/assest/images/login-bg.jpg')} style={styles.backgroundImage}>
+      <ImageBackground source={require('../../src/assest/images/login-bg.jpg')} style={styles.backgroundImage}>
 
-      {step === 0 && (<View style={styles.authSection}>
-        <View style={styles.authHeader}>
-          <View style={styles.logo}>
-            <Image
-              source={require('../../src/assest/images/logo.png')}
-              style={styles.logoImage}
-              resizeMode="contain" />
-          </View>
-          <View style={styles.heading}>
-            <Text style={styles.headingText}>Get Started with your</Text>
-            <Text style={styles.headingTitle}>Mobile Number</Text>
-            <Text style={styles.headingSubtitle}>
-              An OTP would be delivered to your phone via Text or WhatsApp Message
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.authForm}>
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Mobile No.</Text>
-            <View style={styles.mobileInput}>
-              <Text style={styles.countryCode}>+91</Text>
-              <TextInput
-                style={styles.formControl}
-                keyboardType="numeric"
-                placeholder=""
-                maxLength={10}
-                value={AppUserValues.mobile}
-                onChangeText={handleMobileChange} />
+        {step === 0 && (<View style={styles.authSection}>
+          <View style={styles.authHeader}>
+            <View style={styles.logo}>
+              <Image
+                source={require('../../src/assest/images/logo.png')}
+                style={styles.logoImage}
+                resizeMode="contain" />
             </View>
-            {mobileError ? <Text style={styles.errorText}>{mobileError}</Text> : null}
+            <View style={styles.heading}>
+              <Text style={styles.headingText}>Get Started with your</Text>
+              <Text style={styles.headingTitle}>Mobile Number</Text>
+              <Text style={styles.headingSubtitle}>
+                An OTP would be delivered to your phone via Text or WhatsApp Message
+              </Text>
+            </View>
           </View>
-          <TouchableOpacity
-            style={[styles.button, styles.buttonWide, !!mobileError || AppUserValues.mobile.length <= 9 ? styles.buttonDisabled : styles.buttonActive]}
-            // onPress={()=>(navigation.navigate('Splash'))}
-            onPress={sendOtpLogin}
 
-          >
-            <Text style={styles.buttonText}>Get OTP</Text>
-          </TouchableOpacity>
-          {/* <TouchableOpacity
+          <View style={styles.authForm}>
+            <View style={styles.formGroup}>
+              <Text style={styles.label}>Mobile No.</Text>
+              <View style={styles.mobileInput}>
+                <Text style={styles.countryCode}>+91</Text>
+                <TextInput
+                  style={styles.formControl}
+                  keyboardType="numeric"
+                  placeholder=""
+                  maxLength={10}
+                  value={AppUserValues.mobile}
+                  onChangeText={handleMobileChange} />
+              </View>
+              {mobileError ? <Text style={styles.errorText}>{mobileError}</Text> : null}
+            </View>
+            <TouchableOpacity
+              style={[styles.button, styles.buttonWide, !!mobileError || AppUserValues.mobile.length <= 9 ? styles.buttonDisabled : styles.buttonActive]}
+              // onPress={()=>(navigation.navigate('Splash'))}
+              onPress={sendOtpLogin}
+              // onPress={login}
+
+            >
+              <Text style={styles.buttonText}>Get OTP</Text>
+            </TouchableOpacity>
+            {/* <TouchableOpacity
             style={{ borderWidth: 1 }}
             onPress={() => fetchData()}
 
           >
             <Text style={styles.buttonText}>Get</Text>
           </TouchableOpacity> */}
-        </View>
-
-        <View style={styles.authFooter}>
-          {/* <OrImage
-          style={styles.orImage}
-        /> */}
-          <Image
-            source={require('../../src/assest/images/or.png')}
-            style={styles.orImage}
-            resizeMode="contain" />
-          <TouchableOpacity style={[styles.googleBtn]}>
-            {/* <GoogleIcon
-          style={styles.googleIcon}
-        /> */}
-            <Image
-              source={require('../../src/assest/images/google-icon.png')}
-              style={styles.googleIcon}
-              resizeMode="contain" />
-            <Text style={styles.googleBtnText} allowFontScaling={false}>Continue with Google</Text>
-          </TouchableOpacity>
-          <Text style={styles.footerText}>
-            Don't have an account?{' '}
-            <Text style={[styles.textPrimary, styles.registerLink]} onPress={() => {checkAndClearStore();  navigation.navigate('Register'); }}>
-              Register Now
-            </Text>
-          </Text>
-        </View>
-      </View>)}
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Login Page</Text>
-        {isBiometricSupported ? (
-          <Button
-            title="Biometric Login"
-            onPress={handleBiometricAuthentication}
-          />
-        ) : (
-          <Text>Biometric authentication is not supported on this device.</Text>
-        )}
-      </View>
-
-      {ShowOtpScreen && step !== 2 && step === 1 && (
-        <View style={styles.oauthSection}>
-          <View style={styles.oauthHeader}>
-            <View style={styles.oheading}>
-              <Text style={styles.oheadingText}>Verify OTP</Text>
-              <Text style={styles.osmallText}>
-                We have sent a code to
-              </Text>
-              <Text style={styles.mobileNo}>+91<Text>{formatMobileNumber(AppUserValues.mobile)}</Text></Text>
-              <TouchableOpacity>
-                <Text style={styles.otextPrimary} onPress={() => setStep(0)}>Change Mobile Number</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          <View style={styles.oauthForm}>
-            <View style={styles.oformGroup}>
-              <Text style={styles.label}>Enter OTP</Text>
-              <View style={styles.otpScreen}>
-                <View style={styles.otpInput}>
-                  {otp.map((digit, index) => (
-                    <TextInput
-                      key={index}
-                      ref={inputRefs[index]}
-                      style={[
-                        styles.oformControl,
-                        focusedIndex === index && styles.activeInput
-                      ]}
-                      keyboardType="numeric"
-                      maxLength={1}
-                      value={digit}
-                      onChangeText={(text) => handleChangeText(index, text)}
-                      onKeyPress={(e) => handleKeyPress(index, e)}
-                      onFocus={() => setFocusedIndex(index)}
-                      onBlur={() => setFocusedIndex(null)}
-                      autoFocus={index === 0} />
-                  ))}
-                </View>
-              </View>
-              {ErrorMsg ? (
-                <View>
-                  <Text>{ErrorMsg}</Text>
-                  <Text style={[styles.textPrimary, styles.registerLink]} onPress={() => setStep(0)}>
-                    Register Now
-                  </Text>
-                </View>
-              ) : null}
-            </View>
-            <TouchableOpacity
-              style={styles.verifyButton}
-              onPress={validateOtpLogin}
-              disabled={otp.some((digit) => digit === '' || timerCounter <= 0)}
-            >
-              <Text style={styles.verifyButtonText}>Verify</Text>
-            </TouchableOpacity>
           </View>
 
           <View style={styles.authFooter}>
-            <Text style={styles.footerText}>Didn't receive code?{' '}
-              <Text style={[styles.rtextPrimary, styles.Link]} onPress={resendOtp} disabled={timerCounter > 0}>
-                Resend
+            {/* <OrImage
+          style={styles.orImage}
+        /> */}
+            <Image
+              source={require('../../src/assest/images/or.png')}
+              style={styles.orImage}
+              resizeMode="contain" />
+            <TouchableOpacity style={[styles.googleBtn]}>
+              {/* <GoogleIcon
+          style={styles.googleIcon}
+        /> */}
+              <Image
+                source={require('../../src/assest/images/google-icon.png')}
+                style={styles.googleIcon}
+                resizeMode="contain" />
+              <Text style={styles.googleBtnText} allowFontScaling={false}>Continue with Google</Text>
+            </TouchableOpacity>
+            <Text style={styles.footerText}>
+              Don't have an account?{' '}
+              <Text style={[styles.textPrimary, styles.registerLink]} onPress={() => { checkAndClearStore(); navigation.navigate('Register'); }}>
+                Register Now
               </Text>
             </Text>
-            <Text
-              style={[
-                styles.rtextPrimary,
-                (timerCounter <= 20 || timerCounter <= 0) && styles.redText
-              ]}
-            >
-              {timerCounter > 0 ? `OTP Expiring in ${timerCounter} seconds` : 'OTP expired'}
-            </Text>
           </View>
+        </View>)}
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text>Login Page</Text>
+          {isBiometricSupported ? (
+            <Button
+              title="Biometric Login"
+              onPress={handleBiometricAuthentication}
+            />
+          ) : (
+            <Text>Biometric authentication is not supported on this device.</Text>
+          )}
         </View>
-      )}
 
-    </ImageBackground>
+        {ShowOtpScreen && step !== 2 && step === 1 && (
+          <View style={styles.oauthSection}>
+            <View style={styles.oauthHeader}>
+              <View style={styles.oheading}>
+                <Text style={styles.oheadingText}>Verify OTP</Text>
+                <Text style={styles.osmallText}>
+                  We have sent a code to
+                </Text>
+                <Text style={styles.mobileNo}>+91<Text>{formatMobileNumber(AppUserValues.mobile)}</Text></Text>
+                <TouchableOpacity>
+                  <Text style={styles.otextPrimary} onPress={() => setStep(0)}>Change Mobile Number</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View style={styles.oauthForm}>
+              <View style={styles.oformGroup}>
+                <Text style={styles.label}>Enter OTP</Text>
+                <View style={styles.otpScreen}>
+                  <View style={styles.otpInput}>
+                    {otp.map((digit, index) => (
+                      <TextInput
+                        key={index}
+                        ref={inputRefs[index]}
+                        style={[
+                          styles.oformControl,
+                          focusedIndex === index && styles.activeInput
+                        ]}
+                        keyboardType="numeric"
+                        maxLength={1}
+                        value={digit}
+                        onChangeText={(text) => handleChangeText(index, text)}
+                        onKeyPress={(e) => handleKeyPress(index, e)}
+                        onFocus={() => setFocusedIndex(index)}
+                        onBlur={() => setFocusedIndex(null)}
+                        autoFocus={index === 0} />
+                    ))}
+                  </View>
+                </View>
+                {ErrorMsg ? (
+                  <View>
+                    <Text>{ErrorMsg}</Text>
+                    <Text style={[styles.textPrimary, styles.registerLink]} onPress={() => setStep(0)}>
+                      Register Now
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
+              <TouchableOpacity
+                style={styles.verifyButton}
+                onPress={validateOtpLogin}
+                disabled={otp.some((digit) => digit === '' || timerCounter <= 0)}
+              >
+                <Text style={styles.verifyButtonText}>Verify</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.authFooter}>
+              <Text style={styles.footerText}>Didn't receive code?{' '}
+                <Text style={[styles.rtextPrimary, styles.Link]} onPress={resendOtp} disabled={timerCounter > 0}>
+                  Resend
+                </Text>
+              </Text>
+              <Text
+                style={[
+                  styles.rtextPrimary,
+                  (timerCounter <= 20 || timerCounter <= 0) && styles.redText
+                ]}
+              >
+                {timerCounter > 0 ? `OTP Expiring in ${timerCounter} seconds` : 'OTP expired'}
+              </Text>
+            </View>
+          </View>
+        )}
+
+      </ImageBackground>
       {/* {step === 2 && (<Register setStep={setStep} />)} */}
 
       <Modal visible={errorModal} animationType="slide" transparent onRequestClose={() => setErrorModal(false)}>

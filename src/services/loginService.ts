@@ -74,7 +74,7 @@ export const loginMobile = async (mobileNo: any, otp: any) => {
   const tokentemp = await AsyncStorage.getItem('token');
   const token = tokentemp;
 
-  const payload = { mobile: mobileNo, otp };
+  const payload = { mobile: mobileNo, otp:otp };
 
   try {
     const response = await fetch(`${BASE_URL}/Login/LoginMobile`, {
