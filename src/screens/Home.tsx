@@ -58,7 +58,7 @@ const Home = () => {
 
     useEffect(() => {
         fetchAppUsers().then(data => {
-            console.log(data);
+            console.log("data home",data);
             setAppUsers(data);
         }).catch(er => {
             console.log(er);
@@ -66,6 +66,89 @@ const Home = () => {
         })
 
     }, []);
+
+    // useEffect(() => {
+    //     checkApplicationPermission();
+
+    //     PushNotification.getChannels((channelIds) => {
+    //         channelIds.forEach((id) => {
+    //             PushNotification.deleteChannel(id);
+    //         });
+    //     });
+
+    //     PushNotification.configure({
+    //         onRegister: (token) => {
+    //             console.log('FCM Token: home', token);
+    //         },
+
+    //         onNotification: (notification) => {
+    //             const { message, title, id }:any = notification;
+
+    //             // Handle the notification data
+    //             const strTitle = title ? title : 'No title';
+    //             const strBody:any = message ? message : 'No message';
+    //             const channelId = id ? id.toString() : 'default-channel-id';
+
+    //             PushNotification.createChannel(
+    //                 {
+    //                     channelId: channelId,
+    //                     channelName: 'remote-message',
+    //                     channelDescription: 'Notification for remote messages',
+    //                     importance: 4,
+    //                     vibrate: true,
+    //                 },
+    //                 (created) => console.log(`Channel created: ${created}`)
+    //             );
+
+    //             PushNotification.localNotification({
+    //                 channelId: channelId,
+    //                 title: strTitle,
+    //                 message: strBody,
+    //             });
+
+    //             console.log('Remote notification received:', notification);
+    //         },
+
+    //         requestPermissions: true,
+    //     });
+
+    //     return () => {
+    //         PushNotification.removeAllDeliveredNotifications();
+    //     };
+    // }, []);
+
+    // const checkApplicationPermission = async () => {
+    //     // if (Platform.OS === 'android') {
+    //     //     try {
+    //     //         const granted = await PermissionsAndroid.request(
+    //     //             PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+    //     //         );
+    //     //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //     //             console.log('Notification permission granted');
+    //     //         } else {
+    //     //             console.log('Notification permission denied');
+    //     //         }
+    //     //     } catch (error) {
+    //     //         console.error('Permission request failed:', error);
+    //     //     }
+    //     // }
+    //     console.log('checkApplicationPermission home');
+    //     if (Platform.OS === 'android' && Platform.Version >= 33) {
+    //                 const granted = await PermissionsAndroid.request(
+    //                     PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    //                     {
+    //                         title: 'Notification Permission',
+    //                         message: 'This app needs notification permissions to send you alerts.',
+    //                         buttonNeutral: 'Ask Me Later',
+    //                         buttonNegative: 'Cancel',
+    //                         buttonPositive: 'OK',
+    //                     }
+    //                 );
+    //                 if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+    //                     console.warn('Notification permission denied');
+    //                 }
+    //             }
+    // };
 
     const handleShare = () => {
         Share.open({
@@ -105,6 +188,8 @@ const Home = () => {
             console.error('An error occurred', err);
         });
     };
+
+   
     useEffect(() => {
         requestNotificationPermission();
         createNotificationChannel();
@@ -151,6 +236,7 @@ const Home = () => {
             vibrate: true,
         });
     };
+
 
     const renderAppUser = ({ item }: { item: any }) => (
         <View style={styles.card}>
@@ -210,7 +296,8 @@ const Home = () => {
         </View><View style={{ justifyContent: 'center', alignItems: 'center' }}>
                 <Text>Push Notification!!</Text>
                 <Button title={'Click Here'} onPress={LocalNotification} />
-            </View></>
+            </View>
+        </>
     );
 };
 

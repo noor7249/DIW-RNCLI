@@ -41,19 +41,30 @@ const App = (): React.JSX.Element => {
     flex: 1,
   };
 
+  const linking = {
+    prefixes: ['https://ssrnew.wazl.in/appUsers/app'],
+    config: {
+      screens: {
+        Login: 'Login/:login',  // Will match /login/{loginParam}
+        Home: 'Home/:home',     // Will match /home/{homeParam}
+      },
+    },
+  };
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={backgroundStyle}>
+        <RemoteNotification/>
         <StatusBar
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={backgroundStyle.backgroundColor}
         />
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
           <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Splash" >
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="RemoteNotification" component={RemoteNotification} />
             <Stack.Screen name="Home" component={Home} />
+            {/* <Stack.Screen name="RemoteNotification" component={RemoteNotification} /> */}
             <Stack.Screen name="BillingAddress" component={BillingAddress} />
             <Stack.Screen name="Add" component={Add} />
             <Stack.Screen name="List" component={List} />
