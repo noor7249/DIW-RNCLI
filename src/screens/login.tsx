@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Dimensions, ImageBackground, Image, TextInput, Modal, Button, Alert} from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Dimensions, ImageBackground, Image, TextInput, Modal, Button, Alert, Linking } from 'react-native';
 import { Color, FontFamily } from '../GlobalStyles';
 import appUserStore from '../store/store';
 import { mobileSchema } from '../validationSchemas';
@@ -15,7 +15,12 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 // import { getBillingAddres, getByIdBillingAddres, fetchBillingAddress } from '../services/BillingAddress';
 import ReactNativeBiometrics from 'react-native-biometrics';
-
+import {
+  getHash,
+  removeListener,
+  startOtpListener,
+  useOtpVerify,
+} from 'react-native-otp-verify';
 
 
 type NavigationProps = NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -39,7 +44,22 @@ const Login = () => {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const [isBiometricSupported, setIsBiometricSupported] = useState(false);
   const rnBiometrics = new ReactNativeBiometrics();
- 
+  // const { hash, otp, message, timeoutError, stopListener, startListener } = useOtpVerify({numberOfDigits: 4});
+
+
+  useEffect(() => {
+    getHash().then((hash:any) => {
+      console.log('hash',hash);
+      // use this hash in the message.
+    }).catch(console.log);
+    startOtpListener((message:any) => {
+      console.log('message',message);
+      // extract the otp using regex e.g. the below regex extracts 4 digit otp from message
+      // const otp:any = /(\d{4})/g.exec(message)[1];
+      // setOtp(otp);
+    });
+    return () => removeListener();
+  }, []);
 
 
   useEffect(() => {
@@ -205,7 +225,7 @@ const Login = () => {
     if (AppUserValues.mobile.length === 10) {
       try {
         const response = await sendLoginOtp(AppUserValues.mobile);
-        console.log('response',response);
+        console.log('response', response);
         if (response === 'OTP sent') {
           setOtpSent(true);
           setTimerCounter(60);
@@ -281,7 +301,7 @@ const Login = () => {
       try {
         const response = await validateOtplogin(AppUserValues.mobile, otpString);
         const [status, msg] = response.split(':');
-        console.log('validateOtpLogin',response);
+        console.log('validateOtpLogin', response);
         if (status === 'success') {
           if (msg === 'Not Register') {
             // setLoader(false);
@@ -313,7 +333,7 @@ const Login = () => {
     try {
       const response = await loginMobile(AppUserValues.mobile, otp.join(''));
       // const response = await loginMobile("8308698826", '9999');
-      console.log('response',response);
+      console.log('response', response);
       if (response === 'Not Register') {
         // alert('User Not Exists');
       } else {
@@ -338,7 +358,7 @@ const Login = () => {
     try {
       if (typeof data === 'string') {
         data = JSON.parse(data);
-        console.log('data.token',data.token);
+        console.log('data.token', data.token);
       }
 
       await Promise.all([
@@ -352,6 +372,47 @@ const Login = () => {
     }
   };
 
+  const handleWhatsAppShareHome = () => {
+    const appDeepLink = `DiwRn://home`; // Your app's deep link for the login page
+    const message = `Hello! Click this link to open the home page of the app: ${appDeepLink}`;
+    const whatsappUrl = `whatsapp://send?text=${encodeURIComponent(message)}`;
+    Linking.openURL(whatsappUrl)
+      .then((supported) => {
+        if (supported) {
+          return Linking.openURL(whatsappUrl);
+        } else {
+          Alert.alert(
+            'Error',
+            'WhatsApp is not installed on your device. Please install WhatsApp and try again.'
+          );
+        }
+      })
+      .catch((err) => {
+        Alert.alert('Error', 'An unexpected error occurred.');
+        console.error('An error occurred', err);
+      });
+  };
+  const handleWhatsAppShareLogin = () => {
+    const appDeepLink = `DiwRn://login`; 
+    const message = `Hello! Click this link to open the home page of the app: ${appDeepLink}`;
+    const whatsappUrl = `whatsapp:/   /send?text=${encodeURIComponent(message)}`;
+    Linking.openURL(whatsappUrl)
+      .then((supported) => {
+        if (supported) {
+          return Linking.openURL(whatsappUrl);
+        } else {
+          Alert.alert(
+            'Error',
+            'WhatsApp is not installed on your device. Please install WhatsApp and try again.'
+          );
+        }
+      })
+      .catch((err) => {
+        Alert.alert('Error', 'An unexpected error occurred.');
+        console.error('An error occurred', err);
+      });
+  };
+
   const resendOtp = () => {
     sendOtpLogin();
     setTimerCounter(60);
@@ -361,7 +422,7 @@ const Login = () => {
     <>
       <ImageBackground source={require('../../src/assest/images/login-bg.jpg')} style={styles.backgroundImage}>
 
-        {step === 0 && (<View style={styles.authSection}>
+        {step === 0 && (<><View style={styles.authSection}>
           <View style={styles.authHeader}>
             <View style={styles.logo}>
               <Image
@@ -397,32 +458,30 @@ const Login = () => {
               style={[styles.button, styles.buttonWide, !!mobileError || AppUserValues.mobile.length <= 9 ? styles.buttonDisabled : styles.buttonActive]}
               // onPress={()=>(navigation.navigate('Splash'))}
               onPress={sendOtpLogin}
-              // onPress={login}
-
             >
               <Text style={styles.buttonText}>Get OTP</Text>
             </TouchableOpacity>
             {/* <TouchableOpacity
-            style={{ borderWidth: 1 }}
-            onPress={() => fetchData()}
+    style={{ borderWidth: 1 }}
+    onPress={() => fetchData()}
 
-          >
-            <Text style={styles.buttonText}>Get</Text>
-          </TouchableOpacity> */}
+  >
+    <Text style={styles.buttonText}>Get</Text>
+  </TouchableOpacity> */}
           </View>
 
           <View style={styles.authFooter}>
             {/* <OrImage
-          style={styles.orImage}
-        /> */}
+  style={styles.orImage}
+/> */}
             <Image
               source={require('../../src/assest/images/or.png')}
               style={styles.orImage}
               resizeMode="contain" />
             <TouchableOpacity style={[styles.googleBtn]}>
               {/* <GoogleIcon
-          style={styles.googleIcon}
-        /> */}
+style={styles.googleIcon}
+/> */}
               <Image
                 source={require('../../src/assest/images/google-icon.png')}
                 style={styles.googleIcon}
@@ -431,12 +490,24 @@ const Login = () => {
             </TouchableOpacity>
             <Text style={styles.footerText}>
               Don't have an account?{' '}
-              <Text style={[styles.textPrimary, styles.registerLink]} onPress={() => { checkAndClearStore(); navigation.navigate('Register'); }}>
+              <Text style={[styles.textPrimary, styles.registerLink]} onPress={() => { checkAndClearStore(); navigation.navigate('Register'); } }>
                 Register Now
               </Text>
             </Text>
           </View>
-        </View>)}
+        </View><TouchableOpacity onPress={handleWhatsAppShareHome}>
+            <View>
+              <Text>Share home page</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={handleWhatsAppShareLogin}>
+            <View>
+              <Text>Share login page</Text>
+            </View>
+          </TouchableOpacity>
+          </>
+
+        )}
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
           <Text>Login Page</Text>
           {isBiometricSupported ? (

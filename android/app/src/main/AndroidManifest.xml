@@ -13,31 +13,35 @@
     android:icon="@mipmap/ic_launcher"
     android:roundIcon="@mipmap/ic_launcher_round"
     android:allowBackup="false"
+    android:usesCleartextTraffic="true"
     android:theme="@style/AppTheme"
     android:supportsRtl="true">
-     <meta-data android:name="com.dieam.reactnativepushnotification.notification_foreground"
-        android:value="true"/>
+    <meta-data android:name="com.dieam.reactnativepushnotification.notification_foreground"
+      android:value="true" />
     <meta-data android:name="com.dieam.reactnativepushnotification.channel_create_default"
-        android:value="true"/>
+      android:value="true" />
     <meta-data android:name="com.dieam.reactnativepushnotification.notification_color"
-        android:resource="@color/white"/>
+      android:resource="@color/white" />
     <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationActions"
-        android:exported="true"/>
-    <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher"
-        android:exported="true"/>
-    <receiver android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver"
-        android:exported="true">
-                <intent-filter>
-            <action android:name="android.intent.action.BOOT_COMPLETED"/>
-            <action android:name="android.intent.action.QUICKBOOT_POWERON"/>
-            <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
-        </intent-filter>
+      android:exported="true" />
+    <receiver
+      android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationPublisher"
+      android:exported="true" />
+    <receiver
+      android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationBootEventReceiver"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.BOOT_COMPLETED" />
+        <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+        <action android:name="com.htc.intent.action.QUICKBOOT_POWERON" />
+      </intent-filter>
     </receiver>
- <service android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
-        android:exported="false">
-        <intent-filter>
-            <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-        </intent-filter>
+    <service
+      android:name="com.dieam.reactnativepushnotification.modules.RNPushNotificationListenerService"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="com.google.firebase.MESSAGING_EVENT" />
+      </intent-filter>
     </service>
     <activity
       android:name=".MainActivity"
@@ -46,9 +50,20 @@
       android:launchMode="singleTask"
       android:windowSoftInputMode="adjustResize"
       android:exported="true">
-      <intent-filter>
+      <intent-filter android:autoVerify="true">
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="http" />
+        <data android:scheme="https" />
+        <!-- <data android:scheme="DiwRn" android:host="login" />
+         <data android:scheme="DiwRn" android:host="home" /> -->
+          <!-- <data android:scheme="https" android:host="https://diw.wazl.in/login" android:pathPrefix="/app" /> -->
+            <data android:scheme="https" android:host="https://ssrnew.wazl.in/appUsers" android:pathPrefix="/app" />
       </intent-filter>
     </activity>
   </application>

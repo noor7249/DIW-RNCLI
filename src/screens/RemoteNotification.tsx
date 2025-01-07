@@ -3,20 +3,35 @@ import { PermissionsAndroid, Platform } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 
 const checkApplicationPermission = async () => {
-    if (Platform.OS === 'android') {
-        try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-            );
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log('Notification permission granted');
-            } else {
-                console.log('Notification permission denied');
+    // if (Platform.OS === 'android') {
+    //     try {
+    //         const granted = await PermissionsAndroid.request(
+    //             PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+    //         );
+    //         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+    //             console.log('Notification permission granted');
+    //         } else {
+    //             console.log('Notification permission denied');
+    //         }
+    //     } catch (error) {
+    //         console.error('Permission request failed:', error);
+    //     }
+    // }
+    if (Platform.OS === 'android' && Platform.Version >= 33) {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+                    {
+                        title: 'Notification Permission',
+                        message: 'This app needs notification permissions to send you alerts.',
+                        buttonNeutral: 'Ask Me Later',
+                        buttonNegative: 'Cancel',
+                        buttonPositive: 'OK',
+                    }
+                );
+                if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+                    console.warn('Notification permission denied');
+                }
             }
-        } catch (error) {
-            console.error('Permission request failed:', error);
-        }
-    }
 };
 
 const RemoteNotification = () => {
@@ -37,7 +52,6 @@ const RemoteNotification = () => {
             onNotification: (notification) => {
                 const { message, title, id }:any = notification;
 
-                // Handle the notification data
                 const strTitle = title ? title : 'No title';
                 const strBody:any = message ? message : 'No message';
                 const channelId = id ? id.toString() : 'default-channel-id';
@@ -46,7 +60,7 @@ const RemoteNotification = () => {
                     {
                         channelId: channelId,
                         channelName: 'remote-message',
-                        channelDescription: 'Notification for remote messages', // Channel description
+                        channelDescription: 'Notification for remote messages',
                         importance: 4,
                         vibrate: true,
                     },
